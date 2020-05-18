@@ -34,7 +34,7 @@ import org.sunbird.common.request.ExecutionContext;
 import org.sunbird.common.request.HeaderParam;
 import org.sunbird.common.responsecode.ResponseCode;
 import org.sunbird.telemetry.util.TelemetryEvents;
-import org.sunbird.telemetry.util.TelemetryLmaxWriter;
+import org.sunbird.telemetry.util.TelemetryWriter;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -53,7 +53,6 @@ public class BaseController extends Controller {
   public static final int AKKA_WAIT_TIME = 30;
   private static final String version = "v1";
   private static Object actorRef = null;
-  private TelemetryLmaxWriter lmaxWriter = TelemetryLmaxWriter.getInstance();
   protected Timeout timeout = new Timeout(AKKA_WAIT_TIME, TimeUnit.SECONDS);
 
   static {
@@ -462,7 +461,7 @@ public class BaseController extends Controller {
                 (Map<String, Object>) requestInfo.get(JsonKey.CONTEXT)));
         // if any request is coming form /v1/telemetry/save then don't generate the telemetry log
         // for it.
-        lmaxWriter.submitMessage(req);
+        TelemetryWriter.write(req);
       } catch (Exception ex) {
         ProjectLogger.log(
             "BaseController:createCommonResponse Exception in writing telemetry for request "
@@ -561,6 +560,8 @@ public class BaseController extends Controller {
       params.put(JsonKey.LOG_TYPE, JsonKey.API_ACCESS);
       params.put(JsonKey.MESSAGE, "");
       params.put(JsonKey.METHOD, request.method());
+      params.put("err", exception.getResponseCode() + "");
+      params.put("errtype", exception.getCode());
       // calculate  the total time consume
       long startTime = (Long) params.get(JsonKey.START_TIME);
       params.put(JsonKey.DURATION, calculateApiTimeTaken(startTime));
@@ -573,7 +574,7 @@ public class BaseController extends Controller {
               TelemetryEvents.ERROR.getName(),
               params,
               (Map<String, Object>) requestInfo.get(JsonKey.CONTEXT)));
-      lmaxWriter.submitMessage(reqForTelemetry);
+      TelemetryWriter.write(reqForTelemetry);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
