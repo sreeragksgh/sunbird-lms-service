@@ -136,7 +136,7 @@ public class OnRequestHandler implements ActionCreator {
     request.flash().put(JsonKey.SIGNUP_TYPE, signType);
     request.flash().put(JsonKey.REQUEST_SOURCE, source);
     ExecutionContext context = ExecutionContext.getCurrent();
-    Map<String, Object> reqContext = new HashMap<>();
+    Map<String, Object> reqContext = new WeakHashMap<>();
     // set env and channel to the
     Optional<String> optionalChannel = request.header(HeaderParam.CHANNEL_ID.getName());
     String channel;
@@ -185,8 +185,8 @@ public class OnRequestHandler implements ActionCreator {
       request.flash().put(JsonKey.ACTOR_TYPE, JsonKey.CONSUMER);
     }
     context.setRequestContext(reqContext);
-    Map<String, Object> map = new ConcurrentHashMap<>();
-    Map<String, Object> additionalInfo = new HashMap<>();
+    Map<String, Object> map = new WeakHashMap<>();
+    Map<String, Object> additionalInfo = new WeakHashMap<>();
     additionalInfo.put(JsonKey.URL, url);
     additionalInfo.put(JsonKey.METHOD, methodName);
     additionalInfo.put(JsonKey.START_TIME, startTime);
