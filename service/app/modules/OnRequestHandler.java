@@ -77,6 +77,8 @@ public class OnRequestHandler implements ActionCreator {
         } else {
           result = delegate.call(request);
         }
+        Map<String,Object> reqInfo = requestInfo.remove(ExecutionContext.getRequestId());
+        reqInfo = null;
         return result.thenApply(res -> res.withHeader("Access-Control-Allow-Origin", "*"));
       }
     };
