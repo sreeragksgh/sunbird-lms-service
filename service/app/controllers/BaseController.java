@@ -58,6 +58,7 @@ public class BaseController extends Controller {
       ProjectLogger.log("Exception occured while getting actor ref in base controller " + ex);
     }
   }
+  
 
   private org.sunbird.common.request.Request initRequest(
       org.sunbird.common.request.Request request, String operation, Request httpRequest) {
