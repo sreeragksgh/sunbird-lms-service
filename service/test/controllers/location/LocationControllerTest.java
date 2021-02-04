@@ -44,6 +44,8 @@ public class LocationControllerTest extends BaseApplicationTest {
   private static final String UPDATE_LOCATION_URL = "/v1/location/update";
   private static final String DELETE_LOCATION_URL = "/v1/location/delete";
   private static final String SEARCH_LOCATION_URL = "/v1/location/search";
+  private static final String PARENT_ID = "1a234bc5-dee6-78f9-01g2-h3ij456k7890";
+
 
   @Before
   public void before() {
@@ -323,5 +325,28 @@ public class LocationControllerTest extends BaseApplicationTest {
     Result result = Helpers.route(application, req);
     assertEquals(200, result.status());
   }
+  @Test
+  public void testCreateLocationWithValidParentId() {
+
+    Map userAuthentication = new HashMap<String, String>();
+    userAuthentication = new HashMap<String, String>();
+    userAuthentication.put(JsonKey.USER_ID, "uuiuhcf784508 8y8c79-fhh");
+    Map<String, Object> requestMap = new HashMap<>();
+    Map<String, Object> locationData = new HashMap<>();
+    locationData.put(JsonKey.NAME,LOCATION_NAME);
+    locationData.put(JsonKey.CODE, LOCATION_CODE);
+    locationData.put(JsonKey.TYPE, LOCATION_TYPE);
+    locationData.put(JsonKey.PARENT_ID,PARENT_ID);
+    requestMap.put(JsonKey.REQUEST, locationData);
+    String data = TestUtil.mapToJson(requestMap);
+    JsonNode json = Json.parse(data);
+    RequestBuilder req =
+            new RequestBuilder().bodyJson(json).uri(CREATE_LOCATION_URL).method("POST");
+    // req.headers(headerMap);
+    Result result = Helpers.route(application, req);
+    assertEquals(200, result.status());
+  }
+}
+
 
 }
